@@ -92,8 +92,7 @@ task :compile => [:clean, :restore_if_missing, :version] do
   MSBuildRunner.compile :compilemode => COMPILE_TARGET, :solutionfile => 'src/ResxToFubuLocalization.sln', :clrversion => CLR_TOOLS_VERSION
   mkdir_p STAGE_DIR
 
-  copyOutputFiles "src/ResxToFubuLocalization.Core/bin/#{COMPILE_TARGET}", "*.{dll,pdb}", STAGE_DIR
-  copyOutputFiles "src/ResxToFubuLocalization.Program/bin/#{COMPILE_TARGET}", "*.{dll,pdb}", STAGE_DIR
+  copyOutputFiles "src/ResxToFubuLocalization.Program/bin/#{COMPILE_TARGET}", "*.{dll,pdb,exe}", STAGE_DIR
 
 end
 
