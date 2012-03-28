@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using FubuCore;
 using FubuCore.CommandLine;
@@ -18,10 +19,13 @@ namespace ResxToFubuLocalization.Core.Commands
             {
                 var resxFile = factory.CreateFrom(file);
                 var strings = resxFile.Data.Select(x => new LocalString(x.Key, x.Value));
-                var targetFilename = string.IsNullOrEmpty(resxFile.Culture)
-                                         ? "{0}.{1}.locale.config".ToFormat(resxFile.Name, resxFile.Culture)
-                                         : "{0}.locale.config".ToFormat(resxFile.Name);
+                var culture = resxFile.Culture ?? input.DefaultCulture;
+                var targetFilename = "{0}.{1}.locale.config".ToFormat(culture, resxFile.Name);
                 var target = FileSystem.Combine(input.Target, targetFilename);
+                if(!Directory.Exists(Path.GetDirectoryName(target)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(target));
+                }
                 XmlDirectoryLocalizationStorage.Write(target, strings);
             });
             return true;
