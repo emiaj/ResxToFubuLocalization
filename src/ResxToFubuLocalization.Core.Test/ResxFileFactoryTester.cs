@@ -60,14 +60,14 @@ namespace ResxToFubuLocalization.Core.Test
         [Test]
         public void file_name()
         {
-            _localizedResxFile.FileName.ShouldEqual("file.es-PE.resx");
-            _defaultResxFile.FileName.ShouldEqual("file.resx");
+            _localizedResxFile.FileName.ShouldEqual("file.es-PE");
+            _defaultResxFile.FileName.ShouldEqual("file");
         }
 
         [Test]
         public void name()
         {
-            _localizedResxFile.Name.ShouldEqual("file.es-PE");
+            _localizedResxFile.Name.ShouldEqual("file");
             _defaultResxFile.Name.ShouldEqual("file");
         }
         [Test]
@@ -84,6 +84,12 @@ namespace ResxToFubuLocalization.Core.Test
             _defaultResxFile.Data.ShouldHaveCount(4).Select(x => x.Value).Join("-").ShouldEqual("one-two-three-four");
         }
 
+        [Test]
+        public void extension()
+        {
+            _localizedResxFile.Extension.ShouldEqual(".resx");
+            _defaultResxFile.Extension.ShouldEqual(".resx");
+        }
 
     }
 }

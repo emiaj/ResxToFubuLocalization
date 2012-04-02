@@ -17,13 +17,21 @@ namespace ResxToFubuLocalization.Core
 
         public ResxFile CreateFrom(string path)
         {
-            var resxFileInfo = new ResxFile();
-            resxFileInfo.FilePath = path;
-            resxFileInfo.FileName = Path.GetFileName(path);
-            resxFileInfo.Name = Path.GetFileNameWithoutExtension(path);
-            if (Path.HasExtension(resxFileInfo.Name))
+            var resxFileInfo = new ResxFile
+                                   {
+                                       FilePath = path,
+                                       FileName = Path.GetFileNameWithoutExtension(path),
+                                       Extension = Path.GetExtension(path),
+                                   };
+
+            if (Path.HasExtension(resxFileInfo.FileName))
             {
-                resxFileInfo.Culture = Path.GetExtension(resxFileInfo.Name).TrimStart('.');
+                resxFileInfo.Name = Path.GetFileNameWithoutExtension(resxFileInfo.FileName);
+                resxFileInfo.Culture = Path.GetExtension(resxFileInfo.FileName).TrimStart('.');
+            }
+            else
+            {
+                resxFileInfo.Name = resxFileInfo.FileName;
             }
             var content = _fileSystem.ReadStringFromFile(path);
             var xml = XDocument.Parse(content);

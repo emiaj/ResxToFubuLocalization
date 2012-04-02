@@ -12,6 +12,7 @@ namespace ResxToFubuLocalization.Core
         public string FileName { get; set; }
         public string Name { get; set; }
         public string Culture { get; set; }
+        public string Extension { get; set; }
         public IDictionary<string, string> Data { get; private set; }
     }
 }
