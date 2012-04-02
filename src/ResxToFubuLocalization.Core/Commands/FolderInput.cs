@@ -11,7 +11,7 @@ namespace ResxToFubuLocalization.Core.Commands
         }
         [Description("The folder where .resx files will be found")]
         public string Source { get; set; }
-        [Description("The folder where .locate files will be written")]
+        [Description("The folder where .locale files will be written")]
         public string Target { get; set; }
         [Description("The culture used by default")]
         public string DefaultCulture { get; set; }
