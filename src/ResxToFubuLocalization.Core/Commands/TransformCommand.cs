@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using FubuCore;
 using FubuCore.CommandLine;
+using FubuCore.Util;
 using FubuLocalization;
 using FubuLocalization.Basic;
 
@@ -15,6 +17,7 @@ namespace ResxToFubuLocalization.Core.Commands
         public override bool Execute(FolderInput input)
         {
             var factory = new ResxFileFactory(new FileSystem());
+            var cache = new Cache<string, IList<LocalString>>(x => new List<LocalString>());
             Console.WriteLine("Searching for resx files in {0}", input.Source);
             var files = new FileSystem().FindFiles(input.Source, new FileSet {Include = "*.resx"}).ToList();
             if (files.Count == 0)
@@ -28,20 +31,25 @@ namespace ResxToFubuLocalization.Core.Commands
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Transforming file: {0}", file);
                 var resxFile = factory.CreateFrom(file);
-                var strings = resxFile.Data.Select(x => new LocalString(x.Key, x.Value));
+                var strings = resxFile.Data
+                    .Select(x => new LocalString(string.Format("{0}.{1}", resxFile.Name, x.Key), x.Value))
+                    .ToList();
                 var culture = resxFile.Culture ?? input.DefaultCulture;
-                var targetFilename = "{0}.{1}.locale.config".ToFormat(culture, resxFile.Name);
-                var target = FileSystem.Combine(input.Target, targetFilename);
-                if(!Directory.Exists(Path.GetDirectoryName(target)))
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(target));
-                }
                 strings.Each(s => Console.WriteLine("LocalString: {0}", s));
-                Console.WriteLine("Writting locale strings to: {0}", target);
-                XmlDirectoryLocalizationStorage.Write(target, strings);
+                cache[culture].AddRange(strings);
                 Console.ResetColor();
                 Console.WriteLine("--------------------------------------");
             });
+            if (!Directory.Exists(input.Target))
+            {
+                Directory.CreateDirectory(input.Target);
+            }
+            cache.GetAllKeys().Each(k =>
+            {
+                var culture = CultureInfo.GetCultureInfo(k);
+                XmlDirectoryLocalizationStorage.Write(input.Target, culture, cache[k]);
+            });
+
             return true;
         }
     }
