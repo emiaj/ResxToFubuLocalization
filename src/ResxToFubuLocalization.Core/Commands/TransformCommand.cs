@@ -32,7 +32,7 @@ namespace ResxToFubuLocalization.Core.Commands
                 Console.WriteLine("Transforming file: {0}", file);
                 var resxFile = factory.CreateFrom(file);
                 var strings = resxFile.Data
-                    .Select(x => new LocalString(string.Format("{0}.{1}", resxFile.Name, x.Key), x.Value))
+                    .Select(x => new LocalString(string.Format("{0}:{1}", resxFile.Name, x.Key), x.Value))
                     .ToList();
                 var culture = resxFile.Culture ?? input.DefaultCulture;
                 strings.Each(s => Console.WriteLine("LocalString: {0}", s));
